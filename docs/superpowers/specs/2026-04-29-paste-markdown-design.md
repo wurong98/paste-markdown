@@ -396,3 +396,26 @@ paste-markdown/
 - PDF 导出
 - 密码保护
 - 二维码生成
+
+---
+
+## 已知问题
+
+### PNG 导出长图不清晰
+
+**状态**: 未解决，暂时跳过
+
+**现象**: 转 PNG 时，长内容的图片下半部分分辨率明显低于上半部分，字体模糊。
+
+**已尝试**:
+- `html2canvas` — 不支持 Tailwind v4 的 `lab()` CSS 颜色，崩溃
+- `dom-to-image-more` — 输出 0 字节文件
+- `html-to-image` + `pixelRatio: 3` — 短内容清晰，长内容下半部分模糊
+- 导出前临时展开元素到 `scrollHeight` — 问题依旧
+
+**根本原因猜测**: `html-to-image` 内部用 SVG `foreignObject` 渲染，浏览器对超大 SVG 有尺寸/内存限制，超过阈值后降级渲染质量。
+
+**可能的后续方向**:
+- 服务端渲染 PNG（Puppeteer / playwright 截图）
+- 分段截图后拼接
+- 换用 Playwright API Route 在服务端生成图片
