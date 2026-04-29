@@ -6,6 +6,7 @@ declare module 'dom-to-image-more' {
     height?: number
     style?: Record<string, string>
     filter?: (node: Node) => boolean
+    cacheBust?: boolean
   }
   const domtoimage: {
     toPng(node: HTMLElement, options?: Options): Promise<string>
