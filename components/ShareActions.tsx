@@ -25,12 +25,13 @@ export default function ShareActions({ rawContent, contentSelector }: Props) {
 
       const { toPng } = await import('html-to-image')
 
-      // html-to-image 用 SVG foreignObject 渲染，不需要跨域请求
       const dataUrl = await toPng(el, {
-        pixelRatio: 4,
+        width: el.offsetWidth,
+        height: el.scrollHeight,      // 完整内容高度，不截断
+        canvasWidth: el.offsetWidth * 3,   // 3x 宽度保证清晰
+        canvasHeight: el.scrollHeight * 3, // 3x 高度
         backgroundColor: '#ffffff',
         filter: (node) => {
-          // 跳过外部图片，避免 CORS 报错
           if (node instanceof HTMLImageElement) {
             const src = node.src ?? ''
             return src.startsWith('data:') || src.startsWith(window.location.origin)
