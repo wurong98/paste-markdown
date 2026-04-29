@@ -23,23 +23,17 @@ export default function ShareActions({ rawContent, contentSelector }: Props) {
       const el = document.querySelector(contentSelector) as HTMLElement
       if (!el) return
 
-      // dom-to-image-more 支持现代 CSS 颜色函数（lab、oklch 等）
-      const domtoimage = (await import('dom-to-image-more')).default
+      const { toPng } = await import('html-to-image')
 
-      const origin = window.location.origin
-      const dataUrl = await domtoimage.toPng(el, {
-        scale: 2,
-        bgcolor: '#ffffff',
-        style: {
-          background: '#ffffff',
-          color: '#1e293b',
-        },
-        // 跳过无法跨域抓取的外部资源（图片、字体等）
-        filter: (node: Node) => {
+      // html-to-image 用 SVG foreignObject 渲染，不需要跨域请求
+      const dataUrl = await toPng(el, {
+        pixelRatio: 2,
+        backgroundColor: '#ffffff',
+        filter: (node) => {
+          // 跳过外部图片，避免 CORS 报错
           if (node instanceof HTMLImageElement) {
-            const src = node.src || ''
-            // 同源或 data URI 才保留，其余跳过
-            return src.startsWith('data:') || src.startsWith(origin)
+            const src = node.src ?? ''
+            return src.startsWith('data:') || src.startsWith(window.location.origin)
           }
           return true
         },
