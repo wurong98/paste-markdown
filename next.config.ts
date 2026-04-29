@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['shiki'],
-  },
+  serverExternalPackages: ['shiki'],
 };
 
 export default nextConfig;
