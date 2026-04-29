@@ -25,25 +25,31 @@ export default function ShareActions({ rawContent, contentSelector }: Props) {
 
       const { toPng } = await import('html-to-image')
 
-      const dataUrl = await toPng(el, {
-        width: el.offsetWidth,
-        height: el.scrollHeight,      // 完整内容高度，不截断
-        canvasWidth: el.offsetWidth * 3,   // 3x 宽度保证清晰
-        canvasHeight: el.scrollHeight * 3, // 3x 高度
-        backgroundColor: '#ffffff',
-        filter: (node) => {
-          if (node instanceof HTMLImageElement) {
-            const src = node.src ?? ''
-            return src.startsWith('data:') || src.startsWith(window.location.origin)
-          }
-          return true
-        },
-      })
+      // 临时展开元素到完整内容高度，确保不截断且按真实分辨率渲染
+      const prevStyle = el.style.cssText
+      el.style.height = el.scrollHeight + 'px'
+      el.style.overflow = 'visible'
 
-      const link = document.createElement('a')
-      link.download = 'paste-markdown.png'
-      link.href = dataUrl
-      link.click()
+      try {
+        const dataUrl = await toPng(el, {
+          pixelRatio: 3,
+          backgroundColor: '#ffffff',
+          filter: (node) => {
+            if (node instanceof HTMLImageElement) {
+              const src = node.src ?? ''
+              return src.startsWith('data:') || src.startsWith(window.location.origin)
+            }
+            return true
+          },
+        })
+
+        const link = document.createElement('a')
+        link.download = 'paste-markdown.png'
+        link.href = dataUrl
+        link.click()
+      } finally {
+        el.style.cssText = prevStyle
+      }
     } catch (e) {
       console.error('Export PNG failed:', e)
     } finally {
