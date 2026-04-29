@@ -1,6 +1,6 @@
-import MarkdownRenderer from '@/components/MarkdownRenderer'
 import { highlightCode } from '@/lib/highlight'
 import { getShare } from '@/lib/storage'
+import { marked, Renderer } from 'marked'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -8,27 +8,25 @@ interface Props {
   params: Promise<{ uid: string }>
 }
 
-async function buildHighlightedBlocks(content: string): Promise<Record<string, string>> {
-  const blocks: Record<string, string> = {}
-  const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g
-  const promises: Promise<void>[] = []
+async function renderMarkdown(content: string): Promise<string> {
+  const renderer = new Renderer()
 
-  let match
-  while ((match = codeBlockRegex.exec(content)) !== null) {
-    const lang = match[1] ?? 'plaintext'
-    const code = match[2].trimEnd()
-    const key = `${lang}:${code}`
-    if (!blocks[key]) {
-      promises.push(
-        highlightCode(code, lang).then((html) => {
-          blocks[key] = html
-        })
-      )
-    }
+  renderer.code = ({ text, lang }) => {
+    return `__CODE_PLACEHOLDER_${encodeURIComponent(JSON.stringify({ text, lang: lang ?? 'plaintext' }))}__`
   }
 
-  await Promise.all(promises)
-  return blocks
+  let html = await marked(content, { renderer, async: false }) as string
+
+  // 替换代码块占位符为 shiki 高亮 HTML
+  const placeholders = html.match(/__CODE_PLACEHOLDER_[^_]+__/g) ?? []
+  for (const placeholder of placeholders) {
+    const encoded = placeholder.replace('__CODE_PLACEHOLDER_', '').replace('__', '')
+    const { text, lang } = JSON.parse(decodeURIComponent(encoded))
+    const highlighted = await highlightCode(text, lang)
+    html = html.replace(placeholder, `<div class="not-prose my-4">${highlighted}</div>`)
+  }
+
+  return html
 }
 
 export default async function SharePage({ params }: Props) {
@@ -36,7 +34,7 @@ export default async function SharePage({ params }: Props) {
   const data = await getShare(uid)
   if (!data) notFound()
 
-  const highlightedBlocks = await buildHighlightedBlocks(data.content)
+  const html = await renderMarkdown(data.content)
 
   const createdAt = new Date(data.createdAt).toLocaleString('zh-CN', {
     year: 'numeric', month: '2-digit', day: '2-digit',
@@ -61,7 +59,10 @@ export default async function SharePage({ params }: Props) {
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 p-6 md:p-10">
-        <MarkdownRenderer content={data.content} highlightedBlocks={highlightedBlocks} />
+        <div
+          className="prose prose-slate max-w-none dark:prose-invert"
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
       </div>
     </div>
   )
