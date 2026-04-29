@@ -1,7 +1,7 @@
 'use client'
 
 import ExpiresSelect from '@/components/ExpiresSelect'
-import MarkdownRenderer from '@/components/MarkdownRenderer'
+import MarkdownPreview from '@/components/MarkdownPreview'
 import ShareLink from '@/components/ShareLink'
 import UploadArea from '@/components/UploadArea'
 import { useState } from 'react'
@@ -86,7 +86,7 @@ export default function HomePage() {
         <div className="flex flex-col">
           <p className="text-xs text-slate-500 mb-1 font-medium uppercase tracking-wide">预览</p>
           <div className="flex-1 rounded-lg border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 overflow-auto min-h-[400px]">
-            <MarkdownRenderer content={content} />
+            <MarkdownPreview content={content} />
           </div>
         </div>
       </div>
