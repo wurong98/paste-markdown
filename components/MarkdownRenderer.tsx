@@ -21,8 +21,6 @@ export default function MarkdownRenderer({ content, highlightedBlocks = {} }: Pr
         <ReactMarkdown
           remarkPlugins={[remarkGfm, remarkMath]}
           rehypePlugins={[rehypeKatex]}
-          disallowedElements={['script', 'iframe', 'object', 'embed']}
-          unwrapDisallowed
           components={{
             code({ className, children, ...props }) {
               const match = /language-(\w+)/.exec(className ?? '')
