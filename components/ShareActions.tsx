@@ -27,7 +27,7 @@ export default function ShareActions({ rawContent, contentSelector }: Props) {
 
       // html-to-image 用 SVG foreignObject 渲染，不需要跨域请求
       const dataUrl = await toPng(el, {
-        pixelRatio: 2,
+        pixelRatio: 4,
         backgroundColor: '#ffffff',
         filter: (node) => {
           // 跳过外部图片，避免 CORS 报错
