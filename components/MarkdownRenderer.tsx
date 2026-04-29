@@ -1,5 +1,6 @@
 'use client'
 
+import MermaidBlock from '@/components/MermaidBlock'
 import ReactMarkdown from 'react-markdown'
 import rehypeKatex from 'rehype-katex'
 import remarkGfm from 'remark-gfm'
@@ -21,12 +22,17 @@ export default function MarkdownRenderer({ content, highlightedBlocks = {} }: Pr
         <ReactMarkdown
           remarkPlugins={[remarkGfm, remarkMath]}
           rehypePlugins={[rehypeKatex]}
+          children={content}
           components={{
             code({ className, children, ...props }) {
               const match = /language-(\w+)/.exec(className ?? '')
               const lang = match?.[1] ?? ''
               const code = String(children).replace(/\n$/, '')
               const key = `${lang}:${code}`
+
+              if (lang === 'mermaid') {
+                return <MermaidBlock code={code} />
+              }
 
               if (highlightedBlocks[key]) {
                 return (

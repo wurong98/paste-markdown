@@ -1,7 +1,7 @@
 import ShareActions from '@/components/ShareActions'
+import MarkdownRenderer from '@/components/MarkdownRenderer'
 import { highlightCode } from '@/lib/highlight'
 import { getShare } from '@/lib/storage'
-import { marked, Renderer } from 'marked'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -9,24 +9,19 @@ interface Props {
   params: Promise<{ uid: string }>
 }
 
-async function renderMarkdown(content: string): Promise<string> {
-  const renderer = new Renderer()
-
-  renderer.code = ({ text, lang }) => {
-    return `__CODE_PLACEHOLDER_${encodeURIComponent(JSON.stringify({ text, lang: lang ?? 'plaintext' }))}__`
+async function buildHighlightedBlocks(content: string): Promise<Record<string, string>> {
+  const blocks: Record<string, string> = {}
+  const fenceRe = /```(\w*)\n([\s\S]*?)```/g
+  let match
+  while ((match = fenceRe.exec(content)) !== null) {
+    const lang = match[1] || 'plaintext'
+    const text = match[2].replace(/\n$/, '')
+    const key = `${lang}:${text}`
+    if (!blocks[key]) {
+      blocks[key] = await highlightCode(text, lang)
+    }
   }
-
-  let html = await marked(content, { renderer, async: false }) as string
-
-  const placeholders = html.match(/__CODE_PLACEHOLDER_[^_]+__/g) ?? []
-  for (const placeholder of placeholders) {
-    const encoded = placeholder.replace('__CODE_PLACEHOLDER_', '').replace('__', '')
-    const { text, lang } = JSON.parse(decodeURIComponent(encoded))
-    const highlighted = await highlightCode(text, lang)
-    html = html.replace(placeholder, `<div class="not-prose my-4">${highlighted}</div>`)
-  }
-
-  return html
+  return blocks
 }
 
 export default async function SharePage({ params }: Props) {
@@ -34,7 +29,7 @@ export default async function SharePage({ params }: Props) {
   const data = await getShare(uid)
   if (!data) notFound()
 
-  const html = await renderMarkdown(data.content)
+  const highlightedBlocks = await buildHighlightedBlocks(data.content)
 
   const createdAt = new Date(data.createdAt).toLocaleString('zh-CN', {
     year: 'numeric', month: '2-digit', day: '2-digit',
@@ -47,7 +42,6 @@ export default async function SharePage({ params }: Props) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* 顶部导航栏 */}
       <div className="flex items-center justify-between mb-6">
         <Link
           href="/"
@@ -66,10 +60,7 @@ export default async function SharePage({ params }: Props) {
         id="md-content"
         className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 p-6 md:p-10"
       >
-        <div
-          className="prose prose-slate max-w-none dark:prose-invert"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+        <MarkdownRenderer content={data.content} highlightedBlocks={highlightedBlocks} />
       </div>
     </div>
   )
