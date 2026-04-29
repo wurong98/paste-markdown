@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const data = await saveShare(content, expiresIn)
-    const baseUrl = request.nextUrl.origin
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || request.nextUrl.origin
     return NextResponse.json({
       success: true,
       uid: data.uid,
