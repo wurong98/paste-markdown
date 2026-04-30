@@ -3,6 +3,7 @@
 import ExpiresSelect from '@/components/ExpiresSelect'
 import MarkdownRenderer from '@/components/MarkdownRenderer'
 import ShareLink from '@/components/ShareLink'
+import ThemeToggle from '@/components/ThemeToggle'
 import UploadArea from '@/components/UploadArea'
 import { useState } from 'react'
 
@@ -71,11 +72,14 @@ export default function HomePage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-          Paste Markdown
-        </h1>
-        <p className="text-slate-500 text-sm mt-1">快速分享 Markdown，自动渲染，支持过期时间</p>
+      <header className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            Paste Markdown
+          </h1>
+          <p className="text-slate-500 text-sm mt-1">快速分享 Markdown，自动渲染，支持过期时间</p>
+        </div>
+        <ThemeToggle />
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
