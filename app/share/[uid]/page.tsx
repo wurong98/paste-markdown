@@ -1,5 +1,6 @@
 import ShareActions from '@/components/ShareActions'
 import MarkdownRenderer from '@/components/MarkdownRenderer'
+import ThemeToggle from '@/components/ThemeToggle'
 import { highlightCode } from '@/lib/highlight'
 import { getShare } from '@/lib/storage'
 import Link from 'next/link'
@@ -49,7 +50,10 @@ export default async function SharePage({ params }: Props) {
         >
           ← 新建分享
         </Link>
-        <ShareActions rawContent={data.content} contentSelector="#md-content" />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <ShareActions rawContent={data.content} contentSelector="#md-content" />
+        </div>
       </div>
 
       <div className="mb-6 pb-4 border-b border-slate-200 dark:border-slate-700 text-sm text-slate-500 dark:text-slate-400">
