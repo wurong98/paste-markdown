@@ -24,22 +24,17 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* shiki dual-theme support */
-.shiki,
-.shiki span {
-  color: var(--shiki-light);
-  background-color: var(--shiki-light-bg);
-}
-
+/* shiki dual-theme: light colors are already in inline styles, only need to override for dark mode */
 .dark .shiki,
 .dark .shiki span {
-  color: var(--shiki-dark);
-  background-color: var(--shiki-dark-bg);
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
 }
 
 .shiki {
+  margin: 0 !important;
   padding: 1rem;
-  border-radius: 0.5rem;
+  border-radius: 0;
   overflow-x: auto;
   font-size: 0.875rem;
   line-height: 1.6;
