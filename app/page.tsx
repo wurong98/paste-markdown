@@ -3,6 +3,7 @@
 import ExpiresSelect from '@/components/ExpiresSelect'
 import MarkdownRenderer from '@/components/MarkdownRenderer'
 import ShareLink from '@/components/ShareLink'
+import SkillImportBar from '@/components/SkillImportBar'
 import ThemeToggle from '@/components/ThemeToggle'
 import UploadArea from '@/components/UploadArea'
 import { useState } from 'react'
@@ -81,6 +82,8 @@ export default function HomePage() {
         </div>
         <ThemeToggle />
       </header>
+
+      <SkillImportBar />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div className="flex flex-col">
