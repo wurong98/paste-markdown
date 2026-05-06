@@ -17,6 +17,16 @@ export default function SkillImportBar({ skillId }: SkillImportBarProps) {
 
   const skill = SKILLS.find(s => s.id === skillId) || SKILLS[0]
 
+  if (!skill) {
+    return (
+      <div className="mb-6 border border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-950 rounded-lg p-4">
+        <p className="text-sm text-yellow-700 dark:text-yellow-300">
+          暂无可用的 Skill
+        </p>
+      </div>
+    )
+  }
+
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(skill.installCommand)

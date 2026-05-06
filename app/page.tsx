@@ -8,6 +8,13 @@ import ThemeToggle from '@/components/ThemeToggle'
 import UploadArea from '@/components/UploadArea'
 import { useState } from 'react'
 
+interface ShareApiResponse {
+  success: boolean
+  error?: string
+  shareUrl?: string
+  expiresAt?: string
+}
+
 const SAMPLE = `# 欢迎使用 Paste Markdown
 
 粘贴或拖入你的 **Markdown** 文件，生成分享链接。
@@ -52,11 +59,11 @@ export default function HomePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content, expiresIn }),
       })
-      const data = await res.json()
+      const data = (await res.json()) as ShareApiResponse
       if (!data.success) {
         setError(data.error ?? '请求失败')
       } else {
-        setShare({ url: data.shareUrl, expiresAt: data.expiresAt })
+        setShare({ url: data.shareUrl!, expiresAt: data.expiresAt! })
       }
     } catch {
       setError('网络错误，请重试')
