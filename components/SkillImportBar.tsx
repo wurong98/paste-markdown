@@ -55,10 +55,10 @@ export default function SkillImportBar({ skillId }: SkillImportBarProps) {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
           <button
             onClick={handleCopy}
-            className={`px-3 py-1 rounded text-sm text-white transition-colors whitespace-nowrap ${
+            className={`px-3 py-1 rounded text-sm text-white transition-colors whitespace-nowrap w-full sm:w-auto text-center ${
               copyError
                 ? 'bg-red-600 hover:bg-red-700'
                 : 'bg-blue-600 hover:bg-blue-700'
@@ -68,7 +68,7 @@ export default function SkillImportBar({ skillId }: SkillImportBarProps) {
           </button>
           <button
             onClick={() => setExpanded(!expanded)}
-            className="px-3 py-1 rounded text-sm border border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
+            className="px-3 py-1 rounded text-sm border border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors w-full sm:w-auto text-center"
           >
             {expanded ? '收起' : '展开'}
           </button>
