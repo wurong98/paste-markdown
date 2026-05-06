@@ -14,7 +14,9 @@ export const SKILLS: Skill[] = [
     name: 'paste-bit64-share',
     shortDescription: '一键分享文件/文本到 paste.bit64.site',
     description: '一键分享文件或文本内容到 paste.bit64.site，支持 Markdown，生成可预览链接。',
-    installCommand: `mkdir -p ~/.hermes/skills/productivity/paste-bit64-share && curl -s https://raw.githubusercontent.com/your-repo/paste-markdown/main/skills/paste-bit64-share/SKILL.md -o ~/.hermes/skills/productivity/paste-bit64-share/SKILL.md`,
+    // 从 GitHub raw 内容 CDN 获取 skill 文件
+    // 注意：需要确保 SKILL.md 文件存在于项目中，或将 URL 替换为正确的来源
+    installCommand: `mkdir -p ~/.hermes/skills/productivity/paste-bit64-share && curl -s https://raw.githubusercontent.com/wurong98/paste-markdown/main/skills/paste-bit64-share/SKILL.md -o ~/.hermes/skills/productivity/paste-bit64-share/SKILL.md`,
     documentation: `# paste.bit64.site 一键分享
 
 ## 使用方式
